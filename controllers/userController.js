@@ -71,7 +71,17 @@ module.exports = {
     },
     async addFriend(req, res) {
         try {
-            //
+            const user = await User.findOneAndUpdate(
+                { _id: req.params.userId },
+                { $addToSet: { friends: { _id: req.params.friendId } } },
+                { new: true },
+            );
+
+            if (!user) {
+                res.status(404).json({ message: 'User not found' });
+            }
+
+            res.json(user);
         } catch (err) {
             console.log(err);
             return res.status(500).json(err);
